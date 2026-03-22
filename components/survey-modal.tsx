@@ -234,27 +234,36 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-background">
-      <div className="w-full bg-primary px-6 py-10 md:px-8 md:py-12">
-        <div className="mx-auto flex max-w-2xl flex-col items-center justify-center text-center">
-          <h1 className="mb-3 font-serif text-3xl font-bold tracking-tight text-accent md:text-4xl lg:text-5xl">
-            Уважаемый пациент!
-          </h1>
-          <p className="text-base leading-relaxed text-primary-foreground/90 md:text-lg">
-            Пожалуйста, ответьте на {questions.length} вопросов и поделитесь своим отзывом о первом визите. Будем
-            благодарны за ваши искренние и обдуманные ответы.
-          </p>
+    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto" style={{ background: "oklch(0.94 0.015 240)" }}>
+      {/* Header */}
+      <div className="w-full shrink-0 px-6 py-8 md:px-8 md:py-10" style={{ background: "oklch(0.40 0.14 255)" }}>
+        <div className="mx-auto max-w-2xl">
+          {/* Step badge + progress inside header */}
+          <div className="mb-5 flex items-center gap-3">
+            <span className="shrink-0 rounded-full bg-white/15 px-4 py-1.5 text-sm font-semibold text-white backdrop-blur-sm">
+              Шаг {currentQuestion + 1} / {questions.length}
+            </span>
+            <div className="flex flex-1 gap-1">
+              {questions.map((_, index) => (
+                <div
+                  key={index}
+                  className={`h-1 flex-1 rounded-full transition-all duration-300 ${
+                    index <= currentQuestion ? "bg-white" : "bg-white/25"
+                  }`}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Question title centered */}
+          <h2 className="text-center font-serif text-2xl font-bold leading-snug text-white md:text-3xl text-balance">
+            {currentQ.name}
+          </h2>
         </div>
       </div>
 
-      <div className="flex flex-1 items-center justify-center px-4 py-8 md:px-6 md:py-12">
+      <div className="flex flex-1 items-start justify-center px-4 py-8 md:px-6 md:py-10">
         <div className="w-full max-w-2xl">
-          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-            <div className="inline-flex w-fit shrink-0 items-center justify-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold tracking-wide text-accent-foreground shadow-sm">
-              Шаг {currentQuestion + 1} / {questions.length}
-            </div>
-            <h2 className="font-serif text-xl font-semibold leading-snug text-foreground md:text-2xl">{currentQ.name}</h2>
-          </div>
 
           {isArbitraryQuestion ? (
             <div className="space-y-5">
@@ -280,12 +289,12 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
                     key={answer.id}
                     onClick={() => handleAnswerSelect(answer.id)}
                     className={`flex w-full items-center gap-4 rounded-2xl border-2 p-4 shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:shadow-md ${
-                      selectedAnswers.has(answer.id) ? "border-primary bg-primary/10 shadow-md" : "border-border bg-card"
+                      selectedAnswers.has(answer.id) ? "border-primary bg-primary/10 shadow-md" : "border-border bg-white"
                     }`}
                   >
                     <div
                       className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-all ${
-                        selectedAnswers.has(answer.id) ? "border-primary bg-primary" : "border-muted-foreground/30 bg-card"
+                        selectedAnswers.has(answer.id) ? "border-primary bg-primary" : "border-muted-foreground/30 bg-white"
                       }`}
                     >
                       {selectedAnswers.has(answer.id) && <span className="text-sm font-bold text-primary-foreground">✓</span>}
@@ -310,7 +319,7 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
                   key={answer.id}
                   onClick={() => handleAnswerSelect(answer.id)}
                   className={`flex w-full items-center gap-4 rounded-2xl border-2 p-4 shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:shadow-md ${
-                    selectedAnswers.has(answer.id) ? "border-primary bg-primary/10 shadow-md" : "border-border bg-card"
+                    selectedAnswers.has(answer.id) ? "border-primary bg-primary/10 shadow-md" : "border-border bg-white"
                   }`}
                 >
                   <div
@@ -327,16 +336,7 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
             </div>
           )}
 
-          <div className="mt-10 flex gap-1.5">
-            {questions.map((_, index) => (
-              <div
-                key={index}
-                className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                  index < currentQuestion ? "bg-primary" : index === currentQuestion ? "bg-primary/60" : "bg-muted"
-                }`}
-              />
-            ))}
-          </div>
+
         </div>
       </div>
     </div>
