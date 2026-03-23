@@ -7,6 +7,9 @@ export const metadata: Metadata = {
   title: "Опросник",
   description: "Опросник",
   generator: "v0.app",
+  icons: {
+    icon: "/favicon.ico",
+  },
 }
 
 export default function RootLayout({

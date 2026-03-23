@@ -64,7 +64,13 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
           throw new Error("Неверный формат данных")
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Ошибка загрузки опроса")
+        const message = err instanceof Error ? err.message : "Ошибка загрузки опроса"
+        const isFetchError = err instanceof TypeError && err.message === "Failed to fetch"
+        setError(
+          isFetchError
+            ? "Failed to fetch\nОпросник либо уже был заполнен ранее, либо не существует."
+            : message
+        )
       } finally {
         setLoading(false)
       }
@@ -80,7 +86,7 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-background px-4">
         <div className="max-w-md rounded-2xl border-2 border-destructive/30 bg-card p-8 text-center shadow-lg">
           <h2 className="mb-4 font-serif text-2xl font-bold text-destructive">Ошибка</h2>
-          <p className="text-base leading-relaxed text-foreground/80">{error}</p>
+          <p className="whitespace-pre-line text-base leading-relaxed text-foreground/80">{error}</p>
         </div>
       </div>
     )
