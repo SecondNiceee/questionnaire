@@ -64,7 +64,13 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
           throw new Error("Неверный формат данных")
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Ошибка загрузки опроса")
+        const message = err instanceof Error ? err.message : "Ошибка загрузки опроса"
+        const isFetchError = err instanceof TypeError && err.message === "Failed to fetch"
+        setError(
+          isFetchError
+            ? "Failed to fetch\nОпросник либо уже был заполнен ранее, либо не существует."
+            : message
+        )
       } finally {
         setLoading(false)
       }
@@ -77,10 +83,10 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
 
   if (error) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
-        <div className="max-w-md rounded-lg border-2 border-red-500 bg-white p-8 text-center">
-          <h2 className="mb-4 text-2xl font-bold text-red-600">Ошибка</h2>
-          <p className="text-lg text-gray-700">{error}</p>
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background px-4">
+        <div className="max-w-md rounded-2xl border-2 border-destructive/30 bg-card p-8 text-center shadow-lg">
+          <h2 className="mb-4 font-serif text-2xl font-bold text-destructive">Ошибка</h2>
+          <p className="whitespace-pre-line text-base leading-relaxed text-foreground/80">{error}</p>
         </div>
       </div>
     )
@@ -88,10 +94,10 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
 
   if (loading) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background">
         <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-          <p className="text-lg text-gray-700">Загрузка опросника...</p>
+          <div className="mx-auto mb-5 h-14 w-14 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+          <p className="text-lg font-medium text-foreground/70">Загрузка опросника...</p>
         </div>
       </div>
     )
@@ -99,9 +105,9 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
 
   if (questions.length === 0) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background px-4">
         <div className="text-center">
-          <p className="text-lg text-gray-700">Нет доступных вопросов</p>
+          <p className="text-lg font-medium text-muted-foreground">Нет доступных вопросов</p>
         </div>
       </div>
     )
@@ -109,19 +115,25 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
 
   if (completed) {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col">
-        <div className="w-full bg-gradient-to-r from-purple-600 via-purple-500 to-blue-500 px-8 py-8 text-center">
-          <h1 className="text-4xl font-bold" style={{ color: "#F9D52C" }}>
+      <div className="fixed inset-0 z-50 flex flex-col bg-background">
+        <div
+          className="w-full px-8 py-12 text-left"
+          style={{ background: "linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #38bdf8 100%)" }}
+        >
+          <h1
+            className="text-4xl font-bold md:text-5xl"
+            style={{ color: "#ffe033", fontFamily: "'Segoe UI', system-ui, sans-serif", fontWeight: 700 }}
+          >
             Спасибо за ваши ответы!
           </h1>
         </div>
 
-        <div className="flex flex-1 items-center justify-center bg-white px-8">
+        <div className="flex flex-1 items-center justify-center px-8">
           <div className="max-w-2xl text-center">
-            <p className="mb-6 text-lg text-gray-700">
+            <p className="mb-6 text-lg leading-relaxed text-foreground/80">
               Ваши ответы успешно отправлены. Мы благодарны за уделённое время и ценим ваше мнение.
             </p>
-            <p className="text-base text-gray-600">Эта информация поможет нам улучшить качество обслуживания.</p>
+            <p className="text-base text-muted-foreground">Эта информация поможет нам улучшить качество обслуживания.</p>
           </div>
         </div>
       </div>
@@ -234,74 +246,77 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-white">
-      <div className="w-full bg-gradient-to-r from-purple-600 via-purple-500 to-blue-500 px-8 py-8 text-white">
-        <div className="flex flex-col items-center justify-center text-center">
-          <h1 className="mb-2 text-4xl font-bold" style={{ color: "#F9D52C" }}>
+    <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-background">
+      <div
+        className="w-full px-6 py-10 md:px-8 md:py-12"
+        style={{ background: "linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #38bdf8 100%)" }}
+      >
+        <div className="mx-auto flex max-w-2xl flex-col items-start justify-center text-left">
+          <h1
+            className="mb-3 text-3xl font-bold md:text-4xl lg:text-5xl"
+            style={{ color: "#ffe033", fontFamily: "'Segoe UI', system-ui, sans-serif", fontWeight: 700 }}
+          >
             Уважаемый пациент!
           </h1>
-          <p className="leading-relaxed text-white/95" style={{ fontSize: "18px" }}>
-            Пожалуйста, ответьте на {questions.length} вопросов и поделитесь своим отзывом о первом визите. Будем
+          <p className="text-base leading-relaxed text-white/90 md:text-lg">
+            Пожалуйста, ответьте на вопросы и поделитесь своим отзывом о визите. Будем
             благодарны за ваши искренние и обдуманные ответы.
           </p>
         </div>
       </div>
 
-      <div className="flex flex-1 items-center justify-center bg-white px-4 py-8">
-        <div className="w-full max-w-2xl rounded-2xl bg-white">
-          <div className="mb-6 flex items-center gap-3">
-            <div
-              className="flex shrink-0 items-center justify-center rounded-[21px] px-6 py-3 text-base font-bold text-black"
-              style={{ backgroundColor: "#F9D52C" }}
-            >
-              Шаг {currentQuestion + 1}
+      <div className="flex flex-1 items-center justify-center px-4 py-8 md:px-6 md:py-12">
+        <div className="w-full max-w-2xl">
+          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="inline-flex w-fit shrink-0 items-center justify-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold tracking-wide text-accent-foreground shadow-sm">
+              Шаг {currentQuestion + 1} / {questions.length}
             </div>
-            <h2 className="text-xl font-semibold text-foreground">{currentQ.name}</h2>
+            <h2 className="font-serif text-xl font-semibold leading-snug text-foreground md:text-2xl">{currentQ.name}</h2>
           </div>
 
           {isArbitraryQuestion ? (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <textarea
                 value={textAnswer}
                 onChange={(e) => setTextAnswer(e.target.value)}
                 placeholder="Введите ваш ответ..."
-                className="min-h-[120px] w-full rounded-xl border-2 border-border p-4 text-base focus:border-primary focus:outline-none"
+                className="min-h-[140px] w-full rounded-2xl border-2 border-border bg-card p-5 text-base leading-relaxed shadow-sm transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10 focus:outline-none"
               />
               <button
                 onClick={handleTextSubmit}
                 disabled={!textAnswer.trim()}
-                className="w-full rounded-xl bg-primary px-6 py-3 text-base font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50"
+                className="w-full rounded-2xl bg-primary px-6 py-4 text-base font-semibold tracking-wide text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:shadow-none"
               >
                 {currentQuestion < questions.length - 1 ? "Далее" : "Завершить"}
               </button>
             </div>
           ) : isMultipleQuestion ? (
-            <div className="space-y-4">
+            <div className="space-y-5">
               <div className="space-y-3">
                 {currentQ.content.map((answer) => (
                   <button
                     key={answer.id}
                     onClick={() => handleAnswerSelect(answer.id)}
-                    className={`flex w-full items-center gap-4 rounded-xl border-2 p-3 transition-all hover:border-primary hover:bg-primary/5 ${
-                      selectedAnswers.has(answer.id) ? "border-primary bg-primary/10" : "border-border bg-white"
+                    className={`flex w-full items-center gap-4 rounded-2xl border-2 p-4 shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:shadow-md ${
+                      selectedAnswers.has(answer.id) ? "border-primary bg-primary/10 shadow-md" : "border-border bg-card"
                     }`}
                   >
                     <div
-                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded border-2 transition-all ${
-                        selectedAnswers.has(answer.id) ? "border-primary bg-primary" : "border-border bg-white"
+                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-all ${
+                        selectedAnswers.has(answer.id) ? "border-primary bg-primary" : "border-muted-foreground/30 bg-card"
                       }`}
                     >
-                      {selectedAnswers.has(answer.id) && <span className="text-sm font-bold text-white">✓</span>}
+                      {selectedAnswers.has(answer.id) && <span className="text-sm font-bold text-primary-foreground">✓</span>}
                     </div>
 
-                    <span className="text-left text-base">{answer.name}</span>
+                    <span className="text-left text-base leading-relaxed">{answer.name}</span>
                   </button>
                 ))}
               </div>
               <button
                 onClick={handleMultipleAnswerSubmit}
                 disabled={selectedAnswers.size === 0}
-                className="w-full rounded-xl bg-primary px-6 py-3 text-base font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50"
+                className="w-full rounded-2xl bg-primary px-6 py-4 text-base font-semibold tracking-wide text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:shadow-none"
               >
                 {currentQuestion < questions.length - 1 ? "Далее" : "Завершить"}
               </button>
@@ -312,30 +327,30 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
                 <button
                   key={answer.id}
                   onClick={() => handleAnswerSelect(answer.id)}
-                  className={`flex w-full items-center gap-4 rounded-xl border-2 p-3 transition-all hover:border-primary hover:bg-primary/5 ${
-                    selectedAnswers.has(answer.id) ? "border-primary bg-primary/10" : "border-border bg-white"
+                  className={`flex w-full items-center gap-4 rounded-2xl border-2 p-4 shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:shadow-md ${
+                    selectedAnswers.has(answer.id) ? "border-primary bg-primary/10 shadow-md" : "border-border bg-card"
                   }`}
                 >
                   <div
-                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
-                      selectedAnswers.has(answer.id) ? "border-primary" : "border-border"
+                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
+                      selectedAnswers.has(answer.id) ? "border-primary" : "border-muted-foreground/30"
                     }`}
                   >
-                    {selectedAnswers.has(answer.id) && <div className="h-4 w-4 rounded-full bg-primary" />}
+                    {selectedAnswers.has(answer.id) && <div className="h-3.5 w-3.5 rounded-full bg-primary" />}
                   </div>
 
-                  <span className="text-left text-base">{answer.name}</span>
+                  <span className="text-left text-base leading-relaxed">{answer.name}</span>
                 </button>
               ))}
             </div>
           )}
 
-          <div className="mt-6 flex gap-2">
+          <div className="mt-10 flex gap-1.5">
             {questions.map((_, index) => (
               <div
                 key={index}
-                className={`h-2 flex-1 rounded-full transition-all ${
-                  index < currentQuestion ? "bg-primary" : index === currentQuestion ? "bg-primary/50" : "bg-muted"
+                className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
+                  index < currentQuestion ? "bg-primary" : index === currentQuestion ? "bg-primary/60" : "bg-muted"
                 }`}
               />
             ))}
