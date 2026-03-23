@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { API_TOKEN, API_BASE_URL } from "@/lib/constants"
 import type { Survey, Question, SubmitAnswer } from "@/lib/types"
 
@@ -32,6 +32,8 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [completed, setCompleted] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const [slideDirection, setSlideDirection] = useState<"left" | "right">("left")
 
   useEffect(() => {
     if (!requestId) {
@@ -145,6 +147,25 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
   const isMultipleQuestion = currentQ.type === QUESTION_TYPES.MULTIPLE_ANSWER
   const isSingleQuestion = currentQ.type === QUESTION_TYPES.ONE_OPTION
 
+  const goToNextQuestion = (callback?: () => void) => {
+    if (currentQuestion >= questions.length - 1) {
+      callback?.()
+      return
+    }
+    setSlideDirection("left")
+    setIsAnimating(true)
+    setTimeout(() => {
+      setCurrentQuestion((prev) => prev + 1)
+      setSelectedAnswers(new Set())
+      setTextAnswer("")
+      setSlideDirection("right")
+      setTimeout(() => {
+        setIsAnimating(false)
+        callback?.()
+      }, 50)
+    }, 200)
+  }
+
   const handleAnswerSelect = async (answerId: string) => {
     if (isMultipleQuestion) {
       const newSelectedAnswers = new Set(selectedAnswers)
@@ -171,12 +192,11 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
 
     setTimeout(() => {
       if (currentQuestion < questions.length - 1) {
-        setCurrentQuestion(currentQuestion + 1)
-        setSelectedAnswers(new Set())
+        goToNextQuestion()
       } else {
         submitAnswers(updatedAnswers)
       }
-    }, 500)
+    }, 400)
   }
 
   const handleTextSubmit = async () => {
@@ -193,8 +213,7 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
     setAnswers(updatedAnswers)
 
     if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1)
-      setTextAnswer("")
+      goToNextQuestion()
     } else {
       submitAnswers(updatedAnswers)
     }
@@ -214,8 +233,7 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
     setAnswers(updatedAnswers)
 
     if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1)
-      setSelectedAnswers(new Set())
+      goToNextQuestion()
     } else {
       submitAnswers(updatedAnswers)
     }
@@ -266,7 +284,15 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
       </div>
 
       <div className="flex flex-1 items-center justify-center px-4 py-8 md:px-6 md:py-12">
-        <div className="w-full max-w-2xl">
+        <div
+            className={`w-full max-w-2xl transition-all duration-200 ease-out ${
+              isAnimating
+                ? slideDirection === "left"
+                  ? "translate-x-[-30px] opacity-0"
+                  : "translate-x-[30px] opacity-0"
+                : "translate-x-0 opacity-100"
+            }`}
+          >
           <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
             <div className="inline-flex w-fit shrink-0 items-center justify-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold tracking-wide text-accent-foreground shadow-sm">
               Шаг {currentQuestion + 1} / {questions.length}
