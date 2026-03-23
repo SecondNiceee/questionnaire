@@ -110,8 +110,14 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
   if (completed) {
     return (
       <div className="fixed inset-0 z-50 flex flex-col bg-background">
-        <div className="w-full bg-primary px-8 py-12 text-center">
-          <h1 className="font-serif text-4xl font-bold tracking-tight text-accent md:text-5xl">
+        <div
+          className="w-full px-8 py-12 text-left"
+          style={{ background: "linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #38bdf8 100%)" }}
+        >
+          <h1
+            className="text-4xl font-bold md:text-5xl"
+            style={{ color: "#ffe033", fontFamily: "'Segoe UI', system-ui, sans-serif", fontWeight: 700 }}
+          >
             Спасибо за ваши ответы!
           </h1>
         </div>
@@ -235,13 +241,19 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-background">
-      <div className="w-full bg-primary px-6 py-10 md:px-8 md:py-12">
-        <div className="mx-auto flex max-w-2xl flex-col items-center justify-center text-center">
-          <h1 className="mb-3 font-serif text-3xl font-bold tracking-tight text-accent md:text-4xl lg:text-5xl">
+      <div
+        className="w-full px-6 py-10 md:px-8 md:py-12"
+        style={{ background: "linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #38bdf8 100%)" }}
+      >
+        <div className="mx-auto flex max-w-2xl flex-col items-start justify-center text-left">
+          <h1
+            className="mb-3 text-3xl font-bold md:text-4xl lg:text-5xl"
+            style={{ color: "#ffe033", fontFamily: "'Segoe UI', system-ui, sans-serif", fontWeight: 700 }}
+          >
             Уважаемый пациент!
           </h1>
-          <p className="text-base leading-relaxed text-primary-foreground/90 md:text-lg">
-            Пожалуйста, ответьте на {questions.length} вопросов и поделитесь своим отзывом о первом визите. Будем
+          <p className="text-base leading-relaxed text-white/90 md:text-lg">
+            Пожалуйста, ответьте на вопросы и поделитесь своим отзывом о визите. Будем
             благодарны за ваши искренние и обдуманные ответы.
           </p>
         </div>
