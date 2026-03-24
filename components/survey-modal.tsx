@@ -26,6 +26,8 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
   const [isOpen, setIsOpen] = useState(true)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [questions, setQuestions] = useState<Question[]>([])
+  const [surveyName, setSurveyName] = useState<string>("")
+  const [surveyDescription, setSurveyDescription] = useState<string>("")
   const [answers, setAnswers] = useState<SubmitAnswer[]>([])
   const [selectedAnswers, setSelectedAnswers] = useState<Set<string>>(new Set())
   const [textAnswer, setTextAnswer] = useState("")
@@ -60,6 +62,8 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
         const data: Survey[] = await response.json()
         if (data && data[0] && data[0].content) {
           setQuestions(data[0].content)
+          setSurveyName(data[0].name ?? "")
+          setSurveyDescription(data[0].description ?? "")
         } else {
           throw new Error("Неверный формат данных")
         }
@@ -256,11 +260,10 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
             className="mb-3 text-3xl font-bold md:text-4xl lg:text-5xl"
             style={{ color: "#ffe033", fontFamily: "'Segoe UI', system-ui, sans-serif", fontWeight: 700 }}
           >
-            Уважаемый пациент!
+            {surveyName || "Уважаемый пациент!"}
           </h1>
           <p className="text-base leading-relaxed text-white/90 md:text-lg">
-            Пожалуйста, ответьте на вопросы и поделитесь своим отзывом о визите. Будем
-            благодарны за ваши искренние и обдуманные ответы.
+            {surveyDescription || "Пожалуйста, ответьте на вопросы и поделитесь своим отзывом о визите. Будем благодарны за ваши искренние и обдуманные ответы."}
           </p>
         </div>
       </div>
