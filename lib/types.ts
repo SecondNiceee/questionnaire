@@ -19,6 +19,7 @@ export interface Answer {
 export interface Survey {
   id: string
   name: string
+  description?: string
   type: number
   code: string
   required: boolean
