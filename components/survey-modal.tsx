@@ -34,6 +34,7 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [completed, setCompleted] = useState(false)
+  const [isTransitioning, setIsTransitioning] = useState(false)
 
   useEffect(() => {
     if (!requestId) {
@@ -173,14 +174,16 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
     const updatedAnswers = [...answers, newAnswer]
     setAnswers(updatedAnswers)
 
+    setIsTransitioning(true)
     setTimeout(() => {
       if (currentQuestion < questions.length - 1) {
         setCurrentQuestion(currentQuestion + 1)
         setSelectedAnswers(new Set())
+        setIsTransitioning(false)
       } else {
         submitAnswers(updatedAnswers)
       }
-    }, 500)
+    }, 300)
   }
 
   const handleTextSubmit = async () => {
@@ -196,12 +199,16 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
     const updatedAnswers = [...answers, newAnswer]
     setAnswers(updatedAnswers)
 
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1)
-      setTextAnswer("")
-    } else {
-      submitAnswers(updatedAnswers)
-    }
+    setIsTransitioning(true)
+    setTimeout(() => {
+      if (currentQuestion < questions.length - 1) {
+        setCurrentQuestion(currentQuestion + 1)
+        setTextAnswer("")
+        setIsTransitioning(false)
+      } else {
+        submitAnswers(updatedAnswers)
+      }
+    }, 300)
   }
 
   const handleMultipleAnswerSubmit = async () => {
@@ -217,12 +224,16 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
     const updatedAnswers = [...answers, ...newAnswers]
     setAnswers(updatedAnswers)
 
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1)
-      setSelectedAnswers(new Set())
-    } else {
-      submitAnswers(updatedAnswers)
-    }
+    setIsTransitioning(true)
+    setTimeout(() => {
+      if (currentQuestion < questions.length - 1) {
+        setCurrentQuestion(currentQuestion + 1)
+        setSelectedAnswers(new Set())
+        setIsTransitioning(false)
+      } else {
+        submitAnswers(updatedAnswers)
+      }
+    }, 300)
   }
 
   const submitAnswers = async (answersToSubmit: SubmitAnswer[]) => {
@@ -270,31 +281,62 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
 
       <div className="flex flex-1 items-center justify-center px-4 py-8 md:px-6 md:py-12">
         <div className="w-full max-w-2xl">
-          <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div className={`mb-8 flex flex-col gap-4 sm:flex-row sm:items-center transition-all duration-300 ${isTransitioning ? "animate-fade-out-down" : "animate-fade-in-up"}`}>
             <div className="inline-flex w-fit shrink-0 items-center justify-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold tracking-wide text-accent-foreground shadow-sm">
               Шаг {currentQuestion + 1} / {questions.length}
             </div>
             <h2 className="font-serif text-xl font-semibold leading-snug text-foreground md:text-2xl">{currentQ.name}</h2>
           </div>
 
-          {isArbitraryQuestion ? (
-            <div className="space-y-5">
-              <textarea
-                value={textAnswer}
-                onChange={(e) => setTextAnswer(e.target.value)}
-                placeholder="Введите ваш ответ..."
-                className="min-h-[140px] w-full rounded-2xl border-2 border-border bg-card p-5 text-base leading-relaxed shadow-sm transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10 focus:outline-none"
-              />
-              <button
-                onClick={handleTextSubmit}
-                disabled={!textAnswer.trim()}
-                className="w-full rounded-2xl bg-primary px-6 py-4 text-base font-semibold tracking-wide text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:shadow-none"
-              >
-                {currentQuestion < questions.length - 1 ? "Далее" : "Завершить"}
-              </button>
-            </div>
-          ) : isMultipleQuestion ? (
-            <div className="space-y-5">
+          <div className={`transition-all duration-300 ${isTransitioning ? "animate-fade-out-down" : "animate-fade-in-up"}`}>
+            {isArbitraryQuestion ? (
+              <div className="space-y-5">
+                <textarea
+                  value={textAnswer}
+                  onChange={(e) => setTextAnswer(e.target.value)}
+                  placeholder="Введите ваш ответ..."
+                  className="min-h-[140px] w-full rounded-2xl border-2 border-border bg-card p-5 text-base leading-relaxed shadow-sm transition-all placeholder:text-muted-foreground focus:border-primary focus:ring-4 focus:ring-primary/10 focus:outline-none"
+                />
+                <button
+                  onClick={handleTextSubmit}
+                  disabled={!textAnswer.trim()}
+                  className="w-full rounded-2xl bg-primary px-6 py-4 text-base font-semibold tracking-wide text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:shadow-none"
+                >
+                  {currentQuestion < questions.length - 1 ? "Далее" : "Завершить"}
+                </button>
+              </div>
+            ) : isMultipleQuestion ? (
+              <div className="space-y-5">
+                <div className="space-y-3">
+                  {currentQ.content.map((answer) => (
+                    <button
+                      key={answer.id}
+                      onClick={() => handleAnswerSelect(answer.id)}
+                      className={`flex w-full items-center gap-4 rounded-2xl border-2 p-4 shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:shadow-md ${
+                        selectedAnswers.has(answer.id) ? "border-primary bg-primary/10 shadow-md" : "border-border bg-card"
+                      }`}
+                    >
+                      <div
+                        className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-all ${
+                          selectedAnswers.has(answer.id) ? "border-primary bg-primary" : "border-muted-foreground/30 bg-card"
+                        }`}
+                      >
+                        {selectedAnswers.has(answer.id) && <span className="text-sm font-bold text-primary-foreground">✓</span>}
+                      </div>
+
+                      <span className="text-left text-base leading-relaxed">{answer.name}</span>
+                    </button>
+                  ))}
+                </div>
+                <button
+                  onClick={handleMultipleAnswerSubmit}
+                  disabled={selectedAnswers.size === 0}
+                  className="w-full rounded-2xl bg-primary px-6 py-4 text-base font-semibold tracking-wide text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:shadow-none"
+                >
+                  {currentQuestion < questions.length - 1 ? "Далее" : "Завершить"}
+                </button>
+              </div>
+            ) : (
               <div className="space-y-3">
                 {currentQ.content.map((answer) => (
                   <button
@@ -305,48 +347,19 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
                     }`}
                   >
                     <div
-                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition-all ${
-                        selectedAnswers.has(answer.id) ? "border-primary bg-primary" : "border-muted-foreground/30 bg-card"
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
+                        selectedAnswers.has(answer.id) ? "border-primary" : "border-muted-foreground/30"
                       }`}
                     >
-                      {selectedAnswers.has(answer.id) && <span className="text-sm font-bold text-primary-foreground">✓</span>}
+                      {selectedAnswers.has(answer.id) && <div className="h-3.5 w-3.5 rounded-full bg-primary" />}
                     </div>
 
                     <span className="text-left text-base leading-relaxed">{answer.name}</span>
                   </button>
                 ))}
               </div>
-              <button
-                onClick={handleMultipleAnswerSubmit}
-                disabled={selectedAnswers.size === 0}
-                className="w-full rounded-2xl bg-primary px-6 py-4 text-base font-semibold tracking-wide text-primary-foreground shadow-md transition-all hover:bg-primary/90 hover:shadow-lg active:scale-[0.98] disabled:opacity-50 disabled:shadow-none"
-              >
-                {currentQuestion < questions.length - 1 ? "Далее" : "Завершить"}
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {currentQ.content.map((answer) => (
-                <button
-                  key={answer.id}
-                  onClick={() => handleAnswerSelect(answer.id)}
-                  className={`flex w-full items-center gap-4 rounded-2xl border-2 p-4 shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:shadow-md ${
-                    selectedAnswers.has(answer.id) ? "border-primary bg-primary/10 shadow-md" : "border-border bg-card"
-                  }`}
-                >
-                  <div
-                    className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 transition-all ${
-                      selectedAnswers.has(answer.id) ? "border-primary" : "border-muted-foreground/30"
-                    }`}
-                  >
-                    {selectedAnswers.has(answer.id) && <div className="h-3.5 w-3.5 rounded-full bg-primary" />}
-                  </div>
-
-                  <span className="text-left text-base leading-relaxed">{answer.name}</span>
-                </button>
-              ))}
-            </div>
-          )}
+            )}
+          </div>
 
           <div className="mt-10 flex gap-1.5">
             {questions.map((_, index) => (
