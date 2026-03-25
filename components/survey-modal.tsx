@@ -312,7 +312,7 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
                     <button
                       key={answer.id}
                       onClick={() => handleAnswerSelect(answer.id)}
-                      className={`flex w-full items-center gap-4 rounded-2xl border-2 p-4 shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:shadow-md ${
+                      className={`flex w-full cursor-pointer items-center gap-4 rounded-2xl border-2 p-4 shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:shadow-md ${
                         selectedAnswers.has(answer.id) ? "border-primary bg-primary/10 shadow-md" : "border-border bg-card"
                       }`}
                     >
@@ -342,7 +342,7 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
                   <button
                     key={answer.id}
                     onClick={() => handleAnswerSelect(answer.id)}
-                    className={`flex w-full items-center gap-4 rounded-2xl border-2 p-4 shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:shadow-md ${
+                    className={`flex w-full cursor-pointer items-center gap-4 rounded-2xl border-2 p-4 shadow-sm transition-all hover:border-primary hover:bg-primary/5 hover:shadow-md ${
                       selectedAnswers.has(answer.id) ? "border-primary bg-primary/10 shadow-md" : "border-border bg-card"
                     }`}
                   >
