@@ -281,14 +281,14 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
 
       <div className="flex flex-1 items-center justify-center px-4 py-8 md:px-6 md:py-12">
         <div className="w-full max-w-2xl">
-          <div className={`mb-8 flex flex-col gap-4 sm:flex-row sm:items-center transition-all duration-300 ${isTransitioning ? "animate-fade-out-down" : "animate-fade-in-up"}`}>
+          <div className={`mb-8 flex flex-col gap-4 sm:flex-row sm:items-center transition-all duration-300 ${isTransitioning ? "animate-slide-out-left" : "animate-slide-in-right"}`}>
             <div className="inline-flex w-fit shrink-0 items-center justify-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold tracking-wide text-accent-foreground shadow-sm">
               Шаг {currentQuestion + 1} / {questions.length}
             </div>
             <h2 className="font-serif text-xl font-semibold leading-snug text-foreground md:text-2xl">{currentQ.name}</h2>
           </div>
 
-          <div className={`transition-all duration-300 ${isTransitioning ? "animate-fade-out-down" : "animate-fade-in-up"}`}>
+          <div className={`transition-all duration-300 ${isTransitioning ? "animate-slide-out-left" : "animate-slide-in-right"}`}>
             {isArbitraryQuestion ? (
               <div className="space-y-5">
                 <textarea
