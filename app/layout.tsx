@@ -8,7 +8,10 @@ export const metadata: Metadata = {
   description: "Опросник",
   generator: "v0.app",
   icons: {
-    icon: "/favicon.ico",
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/favicon.ico",
   },
 }
 
