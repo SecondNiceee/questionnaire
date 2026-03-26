@@ -263,8 +263,8 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-background">
       <div
-        className="w-full px-6 py-10 md:px-8 md:py-12"
-        style={{ background: "linear-gradient(90deg, #4c5fd9 0%, #6eb5f7 100%)" }}
+        className="w-full px-6 py-10 md:px-8 md:py-12 bg-cover bg-center"
+        style={{ backgroundImage: "url('/images/survey-background.png')" }}
       >
         <div className="mx-auto flex max-w-2xl flex-col items-start justify-center text-left">
           <h1
