@@ -269,9 +269,9 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
         <div className="mx-auto flex max-w-2xl flex-col items-start justify-center text-left">
           <h1
             className="mb-3 text-3xl font-bold md:text-4xl lg:text-5xl"
-            style={{ color: "#ffe033", fontFamily: "'Segoe UI', system-ui, sans-serif", fontWeight: 700 }}
+            style={{ color: "#ffffff", fontFamily: "'Segoe UI', system-ui, sans-serif", fontWeight: 700 }}
           >
-            {surveyName || "Уважаемый пациент!"}
+            Уважаемый пациент!
           </h1>
           <p className="text-base leading-relaxed text-white/90 md:text-lg">
             {surveyDescription || "Пожалуйста, ответьте на вопросы и поделитесь своим отзывом о визите. Будем благодарны за ваши искренние и обдуманные ответы."}
@@ -282,7 +282,7 @@ export function SurveyModal({ requestId }: SurveyModalProps) {
       <div className="flex flex-1 items-center justify-center px-4 py-8 md:px-6 md:py-12">
         <div className="w-full max-w-2xl">
           <div className={`mb-8 flex flex-col gap-4 sm:flex-row sm:items-center transition-all duration-300 ${isTransitioning ? "animate-slide-out-left" : "animate-slide-in-right"}`}>
-            <div className="inline-flex w-fit shrink-0 items-center justify-center rounded-full bg-accent px-5 py-2.5 text-sm font-semibold tracking-wide text-accent-foreground shadow-sm">
+            <div className="inline-flex w-fit shrink-0 items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold tracking-wide shadow-sm" style={{ background: "#4859d3", color: "#ffffff" }}>
               Шаг {currentQuestion + 1} / {questions.length}
             </div>
             <h2 className="font-serif text-xl font-semibold leading-snug text-foreground md:text-2xl">{currentQ.name}</h2>
